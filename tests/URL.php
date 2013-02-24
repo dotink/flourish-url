@@ -17,7 +17,7 @@
 
 			'Instantiation [NULL args]' => function($data)
 			{
-				$url = new URL();
+				$url = new Url();
 
 				assert('Dotink\Flourish\URL::get')
 
@@ -32,7 +32,7 @@
 
 			'Instantiation [Simple URL]' => function($data)
 			{
-				$url = new URL('https://www.github.com/dotink/flourish-url');
+				$url = new Url('https://www.github.com/dotink/flourish-url');
 
 				assert('Dotink\Flourish\URL::get')
 					-> using  ($url)
@@ -45,7 +45,7 @@
 
 			'Instantiation [Complex URL]' => function($data)
 			{
-				$url = new URL('http://www.google.com/search?q=new+test&page=2#results');
+				$url = new Url('http://www.google.com/search?q=new+test&page=2#results');
 
 				assert('Dotink\Flourish\URL::get')
 
@@ -61,10 +61,10 @@
 
 			'getDomain()' => function($data)
 			{
-				$url1 = new URL('http://www.google.com/search?q=new+test&page=2#results');
-				$url2 = new URL('http://www.google.com:80/dotink/');
-				$url3 = new URL('https://www.github.com:443/dotink/flourish-url');
-				$url4 = new URL('https://www.github.com:80/dotink/');
+				$url1 = new Url('http://www.google.com/search?q=new+test&page=2#results');
+				$url2 = new Url('http://www.google.com:80/dotink/');
+				$url3 = new Url('https://www.github.com:443/dotink/flourish-url');
+				$url4 = new Url('https://www.github.com:80/dotink/');
 
 				assert('Dotink\Flourish\URL::getDomain')
 
@@ -88,10 +88,10 @@
 
 			'getFragment()' => function($data)
 			{
-				$url1 = new URL('http://www.google.com/search?q=new+test&page=2#results');
-				$url2 = new URL('http://www.google.com:80/dotink/');
-				$url3 = new URL();
-				$url4 = new URL('/dotink#example');
+				$url1 = new Url('http://www.google.com/search?q=new+test&page=2#results');
+				$url2 = new Url('http://www.google.com:80/dotink/');
+				$url3 = new Url();
+				$url4 = new Url('/dotink#example');
 
 				assert('Dotink\Flourish\URL::getFragment')
 
@@ -116,10 +116,10 @@
 
 			'getHost()' => function($data)
 			{
-				$url1 = new URL('sftp://dotink.org');
-				$url2 = new URL('http://www.google.com/search?q=test');
-				$url3 = new URL('https://www.github.com');
-				$url4 = new URL();
+				$url1 = new Url('sftp://dotink.org');
+				$url2 = new Url('http://www.google.com/search?q=test');
+				$url3 = new Url('https://www.github.com');
+				$url4 = new Url();
 
 				assert('Dotink\Flourish\URL::getHost')
 
@@ -143,10 +143,10 @@
 
 			'getPath()' => function($data)
 			{
-				$url1 = new URL('sftp://dotink.org');
-				$url2 = new URL('http://www.google.com/search?q=test');
-				$url3 = new URL('/groups/admin');
-				$url4 = new URL();
+				$url1 = new Url('sftp://dotink.org');
+				$url2 = new Url('http://www.google.com/search?q=test');
+				$url3 = new Url('/groups/admin');
+				$url4 = new Url();
 
 				assert('Dotink\Flourish\URL::getPath')
 
@@ -170,10 +170,10 @@
 
 			'getPathWithQuery()' => function($data)
 			{
-				$url1 = new URL('sftp://dotink.org');
-				$url2 = new URL('http://www.google.com/search?q=test');
-				$url3 = new URL('/groups/admin?filter=only+active');
-				$url4 = new URL('?foo=bar');
+				$url1 = new Url('sftp://dotink.org');
+				$url2 = new Url('http://www.google.com/search?q=test');
+				$url3 = new Url('/groups/admin?filter=only+active');
+				$url4 = new Url('?foo=bar');
 
 				assert('Dotink\Flourish\URL::getPathWithQuery')
 
@@ -197,10 +197,10 @@
 
 			'getQuery()' => function($data)
 			{
-				$url1 = new URL('sftp://dotink.org');
-				$url2 = new URL('http://www.google.com/search?q=test');
-				$url3 = new URL('/groups/admin?filter=only+active');
-				$url4 = new URL('?foo=bar');
+				$url1 = new Url('sftp://dotink.org');
+				$url2 = new Url('http://www.google.com/search?q=test');
+				$url3 = new Url('/groups/admin?filter=only+active');
+				$url4 = new Url('?foo=bar');
 
 				assert('Dotink\Flourish\URL::getQuery')
 
@@ -225,10 +225,10 @@
 
 			'getScheme()' => function($data)
 			{
-				$url1 = new URL('sftp://dotink.org');
-				$url2 = new URL('http://www.google.com/search?q=test');
-				$url3 = new URL('https://www.github.com/dotink');
-				$url4 = new URL();
+				$url1 = new Url('sftp://dotink.org');
+				$url2 = new Url('http://www.google.com/search?q=test');
+				$url3 = new Url('https://www.github.com/dotink');
+				$url4 = new Url();
 
 				assert('Dotink\Flourish\URL::getScheme')
 
@@ -253,10 +253,11 @@
 
 			'modify()' => function($data)
 			{
-				$url1 = new URL('sftp://dotink.org');
-				$url2 = new URL('http://www.google.com/search?q=test');
-				$url3 = new URL('https://www.github.com/dotink');
-				$url4 = new URL();
+				$url1 = new Url('sftp://dotink.org');
+				$url2 = new Url('http://www.google.com/search?q=test');
+				$url3 = new Url('https://www.github.com/dotink');
+				$url4 = new Url();
+				$url5 = new Url('http://www.example.com/deep/path/test');
 
 				assert($url1->modify('/home/matts')->get())
 					-> equals('sftp://dotink.org/home/matts')
@@ -292,6 +293,10 @@
 
 				assert($url4->modify(['port' => 8080]))
 					-> equals('http://' . gethostname() . ':8080/')
+				;
+
+				assert($url5->modify('../newpath?param=value')->get())
+					-> equals('http://www.example.com/deep/newpath?param=value')
 				;
 			},
 

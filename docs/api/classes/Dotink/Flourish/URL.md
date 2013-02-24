@@ -428,23 +428,57 @@ with the value of those keys.
 
 ###### Examples
 
+
 ```php
 <?php
 
-$url = new Url('http://www.github.com');
-$url = $url->modify(['scheme' => 'https']);
+$url = new Url('http://www.example.com');
+$url = $url->modify(['scheme' => 'https', 'host' => 'secure.example.com']);
 
 echo $url->get();
 
 //
 // OUTPUT:
 //
-// https://www.github.com
+// https://secure.example.com
 //
 
 ```
-
 			
+```php
+<?php
+
+$url = new Url('http://www.example.com/path');
+$url = $url->modify('/newpath');
+
+echo $url->get();
+
+//
+// OUTPUT:
+//
+// http://www.example.com/newpath
+//
+
+```
+			
+```php
+<?php
+
+$url = new Url('http://www.example.com/deep/path/test');
+$url = $url->modify('../newpath?param=value');
+
+echo $url->get();
+
+//
+// OUTPUT:
+//
+// http://www.example.com/deep/newpath?param=value
+//
+
+```
+			
+
+
 <hr />
 
 #### <span style="color:#3e6a6e;">removeFromQuery()</span>
