@@ -1,7 +1,7 @@
 <?php namespace Dotink\Flourish
 {
 	/**
-	 * Provides functionality to prase and manipulate URLs
+	 * Provides functionality to manipulate URL information
 	 *
 	 * This class uses `$_SERVER['REQUEST_URI']` for the default URL, meaning that the original URL
 	 * entered by the user will be used, or that any rewrites will **not** be reflected by this
@@ -13,10 +13,20 @@
 	 *
 	 * @license    http://flourishlib.com/license
 	 *
-	 * @package    Dotink\Flourish
+	 * @package    Flourish
+	 *
+	 * Static Dependencies:
+	 * - UTF8
 	 */
 	class URL
 	{
+		/**
+		 * Default ports for various schemes
+		 *
+		 * @static
+		 * @access private
+		 * @var array
+		 */
 		static private $defaultPorts = array(
 			'ftp'   => 21,
 			'sftp'  => 22,
@@ -27,6 +37,15 @@
 			'pop3'  => 110,
 			'imap'  => 143
 		);
+
+
+		/**
+		 * The URL data
+		 *
+		 * @access private
+		 * @var array
+		 */
+		private $data = array();
 
 
 		/**
@@ -55,49 +74,77 @@
 
 			}
 
-			$this->url = array_merge(
-				array(
+			$this->data = array(
 
-					//
-					// Default values are pulled from the current request
-					//
+				//
+				// Default values are pulled from the current request
+				//
 
-					'scheme' => isset($scheme)
-						? $scheme
-						: 'http',
+				'scheme' => isset($scheme)
+					? $scheme
+					: 'http',
 
-					'host' => isset($_SERVER['SERVER_NAME'])
-						? $_SERVER['SERVER_NAME']
-						: gethostname(),
+				'host' => isset($_SERVER['SERVER_NAME'])
+					? $_SERVER['SERVER_NAME']
+					: gethostname(),
 
-					'port' => isset($_SERVER['SERVER_PORT'])
-						? $_SERVER['SERVER_PORT']
-						: NULL,
+				'port' => isset($_SERVER['SERVER_PORT'])
+					? $_SERVER['SERVER_PORT']
+					: NULL,
 
-					'path' => isset($_SERVER['REQUEST_URI'])
-						? preg_replace('#\?.*$#D', '', $_SERVER['REQUEST_URI'])
-						: '/',
+				'path' => isset($_SERVER['REQUEST_URI'])
+					? preg_replace('#\?.*$#D', '', $_SERVER['REQUEST_URI'])
+					: '/',
 
-					'query' => isset($_SERVER['REQUEST_URI'])
-						? preg_replace('#^[^?]*\??#', '', $_SERVER['REQUEST_URI'])
-						: '',
+				'query' => isset($_SERVER['REQUEST_URI'])
+					? preg_replace('#^[^?]*\??#', '', $_SERVER['REQUEST_URI'])
+					: '',
 
-					'fragment' => NULL
-				),
-				parse_url($url)
+				'fragment' => NULL
 			);
 
-			if ($this->url['query']) {
-				parse_str($this->url['query'], $this->url['query']);
+			if ($url) {
+				if ($url instanceof self) {
+					$this->data = $url->data;
+					return;
+
+				} else {
+					$url_parts = parse_url($url);
+
+					//
+					// There are two instances where we do not want to use the current values
+					// of our server.  Firstly, if a host was provided in the URL, but no port
+					// was specified, we don't want our port.  If a path was provided, but no
+					// query, we don't want our query.
+					//
+
+					if (isset($url_parts['host']) && !isset($url_parts['port'])) {
+						$this->data['port'] = NULL;
+					}
+
+					if (isset($url_parts['path']) && !isset($url_parts['query'])) {
+						$this->data['query'] = NULL;
+					}
+
+					//
+					// Once we have cleared these from our defaults, we can then merge the parsed
+					// values from the provided URL over our defaults.
+					//
+
+					$this->data = array_merge($this->data, $url_parts);
+				}
 			}
 
+			$this->normalizePath();
 			$this->normalizePort();
+			$this->normalizeQuery();
 		}
 
 
 		/**
-		 * Converts the URl to a string
+		 * Converts the URL to a string
 		 *
+		 * @access public
 		 * @return string The full URL
 		 */
 		public function __toString()
@@ -109,6 +156,7 @@
 		/**
 		 * Get the full URL
 		 *
+		 * @access public
 		 * @return string The full URL
 		 */
 		public function get()
@@ -122,76 +170,115 @@
 		 *
 		 * Port will be included if not 80 for HTTP or 443 for HTTPS.
 		 *
+		 * @access public
 		 * @return string The current domain name, prefixed by `http://` or `https://`
 		 */
 		public function getDomain()
 		{
-			$port = $this->url['port']
-				? ':' . $this->url['port']
+			$port = $this->data['port']
+				? ':' . $this->data['port']
 				: NULL;
 
-			return $this->url['scheme'] . '://' . $this->url['host'] . $port;
+			return $this->data['scheme'] . '://' . $this->data['host'] . $port;
 		}
 
 
 		/**
-		 * Get the fragment
+		 * Get the fragment in the URL
 		 *
+		 * @access public
 		 * @param boolean $include_hash Whether or not to prepend the #, default: FALSE
 		 * @return string The fragment, optionally prepended with #
 		 */
 		public function getFragment($include_hash = FALSE)
 		{
-			return $this->url['fragment']
-				? ($include_hash ? '#' : NULL) . $this->url['fragment']
+			return $this->data['fragment']
+				? ($include_hash ? '#' : NULL) . $this->data['fragment']
 				: NULL;
 		}
 
 
 		/**
-		 * Returns the url host
+		 * Get the host in the URL
 		 *
-		 * @return string The URL host
+		 * @access public
+		 * @return string  The host in the URL
 		 */
 		public function getHost()
 		{
-			return $this->url['host'];
+			return $this->data['host'];
 		}
 
 
 		/**
-		 * Returns the url path
+		 * Gets the path in the URL
 		 *
-		 * @return string  The URL path
+		 * @access public
+		 * @return string  The path in the URL
 		 */
 		public function getPath()
 		{
-			return $this->url['path'];
+			return $this->data['path'];
 		}
 
 
 		/**
 		 * Returns the url path with the query string
 		 *
+		 * @access public
 		 * @return string  The URL with query string
 		 */
 		public function getPathWithQuery()
 		{
-			return $this->url['path'] . $this->getQuery(TRUE);
+			return $this->data['path'] . $this->getQuery(TRUE);
 		}
 
 
 		/**
 		 * Get the query string, does not include parameters added by rewrites
 		 *
+		 * @access public
 		 * @param boolean $include_question_mark Whether or not to prepend the ?, default: FALSE
 		 * @return string The query string, optionally prepended with ?
 		 */
 		public function getQuery($include_question_mark = FALSE)
 		{
-			return ($query = http_build_query($this->url['query'], NULL, '&', PHP_QUERY_RFC3986))
+			if (!defined('PHP_QUERY_RFC3986')) {
+
+				//
+				// PHP < 5.4 did not have PHP_QUERY_RFC3986
+				//
+
+				$encoded_params = array();
+				$query          = NULL;
+
+				if (count($this->data['query'])) {
+					foreach ($this->data['query'] as $param => $value) {
+						$encoded_params[] = rawurlencode($param) . '=' . rawurlencode($value);
+					}
+
+					$query = implode('&', $encoded_params);
+				}
+
+			} else {
+				$query = http_build_query($this->data['query'], NULL, '&', PHP_QUERY_RFC3986);
+			}
+
+			return $query
 				? ($include_question_mark ? '?' : NULL) . $query
 				: NULL;
+		}
+
+
+		/**
+		 * Gets the scheme in the URL
+		 *
+		 * @access public
+		 * @return string  The scheme in the URL
+		 */
+		public function getScheme()
+		{
+			return $this->data['scheme'];
 		}
 
 
@@ -221,68 +308,67 @@
 			$new = clone $this;
 
 			if ($location) {
-				if (is_array($location)) {
-					$new->url = array_merge($new->url, $location);
+				if ($location instanceof self) {
+					$new = clone $location;
 
-					if (!is_array($new->url['query'])) {
-						parse_str($new->url['query'], $new->url['query']);
+				} elseif (is_array($location)) {
+					if (isset($location['scheme']) && !isset($location['port'])) {
+						$location['port'] = NULL;
 					}
+
+					$new->data = array_merge($new->data, $location);
+
 				} elseif (preg_match('#^[A-Za-z]+://#i', $location)) {
-					$location = new self($location);
+					$new = new self($location);
 
 				} else {
 					if (strpos($location, '/') === 0) {
 						$location = new self($location);
-						$new->url = array_merge(
-							$new->url,
+						$new->data = array_merge(
+							$new->data,
 							array(
-								'path'     => $location->url['path'],
-								'query'    => $location->url['query'],
-								'fragment' => $location->url['fragment']
+								'path'     => $location->data['path'],
+								'query'    => $location->data['query'],
+								'fragment' => $location->data['fragment']
 							)
 						);
 
 					} elseif (strpos($location, '?') === 0) {
-						$location = new self($location);
-						$new->url = array_merge(
-							$new->url,
+						$location  = new self($location);
+						$new->data = array_merge(
+							$new->data,
 							array(
-								'query'    => $location->url['query'],
-								'fragment' => $location->url['fragment']
+								'query'    => $location->data['query'],
+								'fragment' => $location->data['fragment']
 							)
 						);
 
 					} elseif (strpos($location, '#') === 0) {
-						$new->url['fragment'] = substr($location, 1);
+						$new->data['fragment'] = substr($location, 1);
 
 					} else {
-						$location  = new self($location);
-						$new_path  = rtrim($new->url['path'], '/') . '/' . $location->url['path'];
-						$new->url = array_merge(
-							$new->url,
+						$location = new self($location);
+
+						if (substr($new->data['path'], -1) != '/') {
+							$path_parts        = explode('/', $new->data['path']);
+							$new->data['path'] = implode('/', array_slice($path_parts, 0, -1));
+						}
+
+						$new->data = array_merge(
+							$new->data,
 							array(
-								'path'     => $new_path,
-								'query'    => $location->url['query'],
-								'fragment' => $location->url['fragment']
+								'path'     => $new->data['path'] . '/' . $location->data['path'],
+								'query'    => $location->data['query'],
+								'fragment' => $location->data['fragment']
 							)
 						);
 					}
 				}
 			}
 
-			//
-			// Some Cleanup
-			//
-
-			$new->url['path'] = str_replace('/./', '/', $new->url['path']);
-			$new->url['path'] = preg_replace('#/[^/]*/\\.\\./#', '/', $new->url['path']);
-			$new->url['path'] = '/' . ltrim($new->url['path'], '/');
-
-			if (!is_array($new->url['query'])) {
-				$new->url['query'] = array();
-			}
-
+			$new->normalizePath();
 			$new->normalizePort();
+			$new->normalizeQuery();
 
 			return $new;
 		}
@@ -291,6 +377,7 @@
 		/**
 		 * Removes one or more parameters from the query string
 		 *
+		 * @access public
 		 * @param string $parameter A parameter to remove from the query string
 		 * @param string ...
 		 * @return URL A new URL with the parameter(s) removed from the query
@@ -301,8 +388,8 @@
 			$parameters = func_get_args();
 
 			foreach ($parameters as $parameter) {
-				if (isset($new->url['query'][$parameter])) {
-					unset($new->url['query'][$parameter]);
+				if (isset($new->data['query'][$parameter])) {
+					unset($new->data['query'][$parameter]);
 				}
 			}
 
@@ -313,6 +400,7 @@
 		/**
 		 * Replaces a value in the query string
 		 *
+		 * @access public
 		 * @param string|array $parameter The query string parameter
 		 * @param string|array $value The value to set the parameter to
 		 * @return URL A new URL with the parameter(s) replaced
@@ -320,21 +408,48 @@
 		public function replaceInQuery($parameter, $value = NULL)
 		{
 			if (func_num_args() == 1) {
+				if (!is_array($parameter)) {
+					throw new ProgrammerException(
+						'Single argument supplied of type %s, must be an array',
+						gettype($parameter)
+					);
+				}
+
 				$data = $parameter;
-				settype($data, 'array');
+
 			} else {
 				$data = array($parameter => $value);
 			}
 
 			$new = clone $this;
 
-
 			foreach ($data as $parameter => $value) {
-				$new->url['query'][$parameter] = $value;
+				$new->data['query'][$parameter] = $value;
 			}
 
 			return $new;
 		}
+
+
+		/**
+		 * Normalizes the URL path resolving parent/current directory segments and repeat slashes
+		 *
+		 * @access private
+		 * @return void
+		 */
+		private function normalizePath()
+		{
+			$this->data['path'] = preg_replace('#/+#',   '/', $this->data['path']);
+			$this->data['path'] = preg_replace('#/\./#', '/', $this->data['path']);
+
+			while (preg_match('#/[^/]+/\.\.(?:/|$)#', $this->data['path'], $matches)) {
+				$this->data['path'] = str_replace($matches[0], '/', $this->data['path']);
+			}
+
+			$this->data['path'] = str_replace('/../', '/', $this->data['path']);
+			$this->data['path'] = '/' . ltrim($this->data['path'],  '/');
+		}
+
 
 		/**
 		 * Normalizes the URL port depending on scheme
@@ -344,11 +459,36 @@
 		 */
 		private function normalizePort()
 		{
-			$scheme = strtolower($this->url['scheme']);
+			$scheme = strtolower($this->data['scheme']);
 
-			if ($this->url['port'] && isset(self::$defaultPorts[$scheme])) {
-				if ($this->url['port'] == self::$defaultPorts[$scheme]) {
-					$this->url['port'] = NULL;
+			if ($this->data['port'] && isset(self::$defaultPorts[$scheme])) {
+				if ($this->data['port'] == self::$defaultPorts[$scheme]) {
+					$this->data['port'] = NULL;
+				}
+			}
+		}
+
+
+		/**
+		 * Normalizes the Query
+		 *
+		 * @access private
+		 * @return void
+		 */
+		private function normalizeQuery()
+		{
+			if (!is_array($this->data['query'])) {
+				if (is_string($this->data['query'])) {
+					$this->data['query'] = trim($this->data['query']);
+
+					if ($this->data['query']) {
+						parse_str($this->data['query'], $this->data['query']);
+					} else {
+						$this->data['query'] = array();
+					}
+
+				} else {
+					$this->data['query'] = array();
 				}
 			}
 		}
