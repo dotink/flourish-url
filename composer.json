@@ -1,0 +1,24 @@
+{
+	"name": "dotink/flourish-url",
+	"description": "A URL parser and manipulation class",
+	"keywords": ["URL"],
+	"license": "AGPL 3.0",
+	"authors": [
+		{
+			"name": "Will Bond",
+			"email": "will@wbond.net",
+			"role": "Original Author"
+		},
+		{
+			"name": "Matthew J. Sahagian",
+			"email": "matt@imarc.net",
+			"role": "Developer"
+		}
+	],
+	"require": {
+		"php": ">=5.3.0"
+	},
+	"autoload": {
+		"classmap": ["src/"]
+	}
+}

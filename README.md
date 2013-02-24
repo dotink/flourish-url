@@ -1,4 +1,4 @@
-flourish-url
+Flourish/URL
 ============
 
-The FlourishToo URL Class
+A URL parsing and manipulation class
