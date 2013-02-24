@@ -1,5 +1,5 @@
 # URL
-## Provides functionality to prase and manipulate URLs
+## Provides functionality to manipulate URL information
 
 _Copyright (c) 2007-2011 Will Bond, others_.
 [http://flourishlib.com/license](http://flourishlib.com/license)
@@ -55,6 +55,14 @@ class.
 ### Static Properties
 #### <span style="color:#6a6e3d;">$defaultPorts</span>
 
+Default ports for various schemes
+
+
+
+### Instance Properties
+#### <span style="color:#6a6e3d;">$data</span>
+
+The URL data
 
 
 
@@ -117,7 +125,7 @@ from the current request.
 
 #### <span style="color:#3e6a6e;">__toString()</span>
 
-Converts the URl to a string
+Converts the URL to a string
 
 ###### Returns
 
@@ -181,7 +189,7 @@ Port will be included if not 80 for HTTP or 443 for HTTPS.
 
 #### <span style="color:#3e6a6e;">getFragment()</span>
 
-Get the fragment
+Get the fragment in the URL
 
 ###### Parameters
 
@@ -227,7 +235,7 @@ Get the fragment
 
 #### <span style="color:#3e6a6e;">getHost()</span>
 
-Returns the url host
+Get the host in the URL
 
 ###### Returns
 
@@ -237,7 +245,7 @@ Returns the url host
 			string
 		</dt>
 		<dd>
-			The URL host
+			The host in the URL
 		</dd>
 	
 </dl>
@@ -247,7 +255,7 @@ Returns the url host
 
 #### <span style="color:#3e6a6e;">getPath()</span>
 
-Returns the url path
+Gets the path in the URL
 
 ###### Returns
 
@@ -257,7 +265,7 @@ Returns the url path
 			string
 		</dt>
 		<dd>
-			The URL path
+			The path in the URL
 		</dd>
 	
 </dl>
@@ -324,6 +332,26 @@ Get the query string, does not include parameters added by rewrites
 		</dt>
 		<dd>
 			The query string, optionally prepended with ?
+		</dd>
+	
+</dl>
+
+
+<hr />
+
+#### <span style="color:#3e6a6e;">getScheme()</span>
+
+Gets the scheme in the URL
+
+###### Returns
+
+<dl>
+	
+		<dt>
+			string
+		</dt>
+		<dd>
+			The scheme in the URL
 		</dd>
 	
 </dl>
@@ -398,6 +426,25 @@ with the value of those keys.
 </dl>
 
 
+###### Examples
+
+```php
+<?php
+
+$url = new Url('http://www.github.com');
+$url = $url->modify(['scheme' => 'https']);
+
+echo $url->get();
+
+//
+// OUTPUT:
+//
+// https://www.github.com
+//
+
+```
+
+			
 <hr />
 
 #### <span style="color:#3e6a6e;">removeFromQuery()</span>
@@ -532,9 +579,49 @@ Replaces a value in the query string
 
 <hr />
 
+#### <span style="color:#3e6a6e;">normalizePath()</span>
+
+Normalizes the URL path resolving parent/current directory segments and repeat slashes
+
+###### Returns
+
+<dl>
+	
+		<dt>
+			void
+		</dt>
+		<dd>
+			Provides no return value.
+		</dd>
+	
+</dl>
+
+
+<hr />
+
 #### <span style="color:#3e6a6e;">normalizePort()</span>
 
 Normalizes the URL port depending on scheme
+
+###### Returns
+
+<dl>
+	
+		<dt>
+			void
+		</dt>
+		<dd>
+			Provides no return value.
+		</dd>
+	
+</dl>
+
+
+<hr />
+
+#### <span style="color:#3e6a6e;">normalizeQuery()</span>
+
+Normalizes the Query
 
 ###### Returns
 

@@ -299,6 +299,8 @@
 		 * If the location is an array, it will replace parts of the URL identified by the keys
 		 * with the value of those keys.
 		 *
+		 * @example modify_with_array.php
+		 *
 		 * @access public
 		 * @param string|array $location The location to modify with
 		 * @return URL The modified URL
