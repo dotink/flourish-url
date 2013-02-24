@@ -40,7 +40,7 @@ echo $url->getDomain();
 
 The domain includes not only the host but also the full scheme and port (if not the default for the scheme).  Similar, if you need the equivalent of PHP's `$_SERVER['REQUEST_URI']` which includes the query string, you'll probably want to use `getPathWithQuery()`.
 
-```
+```php
 $url = new Url('http://example.com/path/subpath/?param1=value&param2=other_value');
 
 echo $url->getPathWithQuery()
@@ -54,6 +54,6 @@ echo $url->getPathWithQuery()
 
 ### Normalization
 
-The `Url` class also attempts to normalize data as much as possible so that you can see consistent and expected results.  For example, if you provide a URL with a scheme of `https` and a port of `443` the port will be discarded as it is the default for the scheme.  For this reason you can always expect `getPort()` to return NULL in the event it provides no significant information.
+The `Url` class also attempts to normalize data as much as possible so that you can see consistent and expected results.  For example, if you provide a URL with a scheme of `https` and a port of `443` the port will be discarded as it is the default for the scheme.  For this reason you can always expect `getPort()` to return `NULL` in the event it provides no significant information.
 
 Similarly, it is possible to pass a URL with a query `encoded+like+this`, however, you should always expect the queries you get out of `Url` to be `encoded%20like%20this`.
