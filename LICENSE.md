@@ -260,7 +260,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------
 
-Additional permission is granted to the following entities to redistribute and re-license this software to third-parties, providing that said license to third party restricts the third-party's right to redistribute, re-license, or sub-license this software in any manner:
+Additional permission is granted to the following entities to redistribute and re-license this software to third-parties, providing that said license to third-party restricts the third-party's right to redistribute, re-license, or sub-license this software in any manner:
 
 - iMarc, LLC
 
