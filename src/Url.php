@@ -11,7 +11,7 @@
 	 * @author     Will Bond           [wb]  <will@flourishlib.com>
 	 * @author     Matthew J. Sahagian [mjs] <msahagian@dotink.org>
 	 *
-	 * @license    http://flourishlib.com/license
+	 * @license    Please reference the LICENSE.md file at the root of this distribution
 	 *
 	 * @package    Flourish
 	 *
