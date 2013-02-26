@@ -248,9 +248,7 @@ You should also get your employer (if you work as a programmer) or school, if an
 
 ---------------------------------------
 
-A portion of this code may be available in Will Bond's original Flourish library licensed under the terms which follow.  If you prefer to use that version of the code under the terms of the license below, please visit:
-
-http://www.flourishlib.com
+A portion of this code may be available in Will Bond's original Flourish library licensed under the terms which follow.  If you prefer to use that version of the code under the terms of the license below, please visit: http://www.flourishlib.com.
 
 Copyright (c) 2007-2011 Will Bond <will@flourishlib.com>
 
