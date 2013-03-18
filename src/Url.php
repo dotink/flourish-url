@@ -109,7 +109,7 @@
 					return;
 
 				} else {
-					$url_parts = parse_url($url);
+					$url_parts = parse_url(ltrim($url));
 
 					//
 					// There are two instances where we do not want to use the current values
@@ -322,50 +322,51 @@
 
 					$new->data = array_merge($new->data, $location);
 
-				} elseif (preg_match('#^[A-Za-z]+://#i', $location)) {
-					$new = new self($location);
-
 				} else {
-					if (strpos($location, '/') === 0) {
-						$location = new self($location);
-						$new->data = array_merge(
-							$new->data,
-							array(
+					$location = ltrim((string) $location);
+
+					if (preg_match('#^[A-Za-z]+://#i', $location)) {
+						$new = new self($location);
+
+					} else {
+						if (strpos($location, '/') === 0) {
+							$location = new self($location);
+							$values   = array(
 								'path'     => $location->data['path'],
 								'query'    => $location->data['query'],
 								'fragment' => $location->data['fragment']
-							)
-						);
+							);
 
-					} elseif (strpos($location, '?') === 0) {
-						$location  = new self($location);
-						$new->data = array_merge(
-							$new->data,
-							array(
+							$new->data = array_merge($new->data, $values);
+
+						} elseif (strpos($location, '?') === 0) {
+							$location  = new self($location);
+							$values    = array(
 								'query'    => $location->data['query'],
 								'fragment' => $location->data['fragment']
-							)
-						);
+							);
 
-					} elseif (strpos($location, '#') === 0) {
-						$new->data['fragment'] = substr($location, 1);
+							$new->data = array_merge($new->data, $values);
 
-					} else {
-						$location = new self($location);
+						} elseif (strpos($location, '#') === 0) {
+							$new->data['fragment'] = substr($location, 1);
 
-						if (substr($new->data['path'], -1) != '/') {
-							$path_parts        = explode('/', $new->data['path']);
-							$new->data['path'] = implode('/', array_slice($path_parts, 0, -1));
-						}
+						} else {
+							$location = new self($location);
 
-						$new->data = array_merge(
-							$new->data,
-							array(
+							if (substr($new->data['path'], -1) != '/') {
+								$path_parts        = explode('/', $new->data['path']);
+								$new->data['path'] = implode('/', array_slice($path_parts, 0, -1));
+							}
+
+							$values = array(
 								'path'     => $new->data['path'] . '/' . $location->data['path'],
 								'query'    => $location->data['query'],
 								'fragment' => $location->data['fragment']
-							)
-						);
+							);
+
+							$new->data = array_merge($new->data, $values);
+						}
 					}
 				}
 			}

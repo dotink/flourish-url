@@ -30,13 +30,18 @@
 			//
 			//
 
-			'Instantiation [Simple URL]' => function($data)
+			'Instantiation [Simple URLs]' => function($data)
 			{
-				$url = new Url('https://www.github.com/dotink/flourish-url');
+				$url1 = new Url('https://www.github.com/dotink/flourish-url');
+				$url2 = new Url('  http://www.google.com');
 
 				assert('Dotink\Flourish\URL::get')
-					-> using  ($url)
-					-> equals ('https://www.github.com/dotink/flourish-url');
+					-> using  ($url1)
+					-> equals ('https://www.github.com/dotink/flourish-url')
+
+					-> using  ($url2)
+					-> equals ('http://www.google.com/')
+				;
 			},
 
 			//
