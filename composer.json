@@ -21,5 +21,12 @@
 	},
 	"autoload": {
 		"classmap": ["src/"]
+	},
+	"extra": {
+		"tails": {
+			"inkwell-2.0": {
+				"src": "library/flourish"
+			}
+		}
 	}
 }
