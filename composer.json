@@ -3,6 +3,7 @@
 	"description": "A URL parser and manipulation class",
 	"keywords": ["URL"],
 	"license": "AGPL 3.0",
+	"type": "opus-package",
 	"authors": [
 		{
 			"name": "Will Bond",
@@ -17,13 +18,14 @@
 	],
 	"require": {
 		"php": ">=5.3.0",
+		"imarc/opus": "dev-master",
 		"dotink/flourish-core": "dev-master"
 	},
 	"autoload": {
 		"classmap": ["src/"]
 	},
 	"extra": {
-		"tails": {
+		"opus": {
 			"inkwell-2.0": {
 				"src": "library/flourish"
 			}
