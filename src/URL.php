@@ -61,6 +61,7 @@
 		public function __construct($url = NULL)
 		{
 			$scheme = NULL;
+			$host   = gethostname();
 
 			if (isset($_SERVER['SERVER_PROTOCOL'])) {
 				$split  = strpos($_SERVER['SERVER_PROTOCOL'], '/');
@@ -68,10 +69,13 @@
 					? strtolower(substr($_SERVER['SERVER_PROTOCOL'], 0, $split))
 					: strtolower($_SERVER['SERVER_PROTOCOL']);
 
-				if ($scheme == 'http' && isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') {
+				$https = ($scheme == 'http' && isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'])
+					? $_SERVER['HTTPS'] !== 'off'
+					: FALSE;
+
+				if ($https) {
 					$scheme = 'https';
 				}
-
 			}
 
 			$this->data = array(
@@ -84,9 +88,9 @@
 					? $scheme
 					: 'http',
 
-				'host' => isset($_SERVER['SERVER_NAME'])
-					? $_SERVER['SERVER_NAME']
-					: gethostname(),
+				'host' => !isset($_SERVER['HTTP_HOST'])
+					? (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : $host)
+					: $_SERVER['HTTP_HOST'],
 
 				'port' => isset($_SERVER['SERVER_PORT'])
 					? $_SERVER['SERVER_PORT']
