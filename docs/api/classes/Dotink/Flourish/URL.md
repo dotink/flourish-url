@@ -2,7 +2,7 @@
 ## Provides functionality to manipulate URL information
 
 _Copyright (c) 2007-2011 Will Bond, others_.
-[http://flourishlib.com/license](http://flourishlib.com/license)
+_Please reference the LICENSE.md file at the root of this distribution_
 
 ### Details
 
