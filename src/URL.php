@@ -90,7 +90,7 @@
 
 				'host' => !isset($_SERVER['HTTP_HOST'])
 					? (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : $host)
-					: $_SERVER['HTTP_HOST'],
+					: preg_replace('#\:\d+$#', '', $_SERVER['HTTP_HOST']),
 
 				'port' => isset($_SERVER['SERVER_PORT'])
 					? $_SERVER['SERVER_PORT']
