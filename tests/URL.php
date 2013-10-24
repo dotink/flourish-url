@@ -5,7 +5,7 @@
 	return [
 
 		'setup' => function($data){
-			needs($data['root'] . '/src/Url.php');
+			needs($data['root'] . '/src/URL.php');
 
 		},
 
@@ -17,12 +17,30 @@
 
 			'Instantiation [NULL args]' => function($data)
 			{
-				$url = new Url();
+				$url1 = new Url();
+
+				$_SERVER['SERVER_NAME'] = 'example.com';
+				$url2 = new Url();
+
+				$_SERVER['HTTP_HOST'] = 'www.example.com';
+				$url3 = new Url();
+
+				$_SERVER['HTTP_HOST'] = 'www.example.com:8080';
+				$url4 = new Url();
 
 				assert('Dotink\Flourish\URL::get')
 
-					-> using  ($url)
+					-> using  ($url1)
 					-> equals ('http://' . gethostname() . '/')
+
+					-> using  ($url2)
+					-> equals ('http://example.com/')
+
+					-> using  ($url3)
+					-> equals ('http://www.example.com/')
+
+					-> using  ($url4)
+					-> equals ('http://www.example.com/')
 				;
 			},
 
@@ -138,7 +156,7 @@
 					-> equals ('www.github.com')
 
 					-> using  ($url4)
-					-> equals (gethostname())
+					-> equals ('www.example.com')
 				;
 			},
 
@@ -297,15 +315,13 @@
 				;
 
 				assert($url4->modify(['port' => 8080]))
-					-> equals('http://' . gethostname() . ':8080/')
+					-> equals('http://www.example.com:8080/')
 				;
 
 				assert($url5->modify('../newpath?param=value')->get())
 					-> equals('http://www.example.com/deep/newpath?param=value')
 				;
 			},
-
-
 		]
 	];
 }
