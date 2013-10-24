@@ -2,7 +2,7 @@
 	"name": "dotink/flourish-url",
 	"description": "A URL parser and manipulation class",
 	"keywords": ["URL"],
-	"license": "AGPL 3.0",
+	"license": "AGPL-3.0",
 	"type": "opus-package",
 	"authors": [
 		{
