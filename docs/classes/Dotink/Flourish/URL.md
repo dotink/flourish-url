@@ -96,7 +96,7 @@ from the current request.
 				$url
 			</td>
 			<td>
-									<a href="http://www.php.net/language.types.string.php">string</a>
+									<a href="http://php.net/language.types.string">string</a>
 				
 			</td>
 			<td>
@@ -206,7 +206,7 @@ Get the fragment in the URL
 				$include_hash
 			</td>
 			<td>
-									<a href="http://www.php.net/language.types.boolean.php">boolean</a>
+									<a href="http://php.net/language.types.boolean">boolean</a>
 				
 			</td>
 			<td>
@@ -312,7 +312,7 @@ Get the query string, does not include parameters added by rewrites
 				$include_question_mark
 			</td>
 			<td>
-									<a href="http://www.php.net/language.types.boolean.php">boolean</a>
+									<a href="http://php.net/language.types.boolean">boolean</a>
 				
 			</td>
 			<td>
@@ -371,10 +371,10 @@ starts.  Using an array allows you to replace selective pieces.
 If the location...
 
 - starts with `/`, it is treated as an absolute path
+- starts with `//` it is treated as a new url on the same scheme
 - starts with a scheme (e.g. `http://`), it is treated as a fully-qualified URL
 - starts with ./ it is treated as a relative path
 - starts with # it is treated as a fragment additon or replacement
-- is ommitted, it is treated as the current URL
 
 If the location is an array, it will replace parts of the URL identified by the keys
 with the value of those keys.
@@ -394,7 +394,7 @@ with the value of those keys.
 				$location
 			</td>
 			<td>
-									<a href="http://www.php.net/language.types.string.php">string</a>
+									<a href="http://php.net/language.types.string">string</a>
 				
 			</td>
 			<td rowspan="3">
@@ -404,7 +404,7 @@ with the value of those keys.
 			
 		<tr>
 			<td>
-									<a href="http://www.php.net/language.types.array.php">array</a>
+									<a href="http://php.net/language.types.array">array</a>
 				
 			</td>
 		</tr>
@@ -500,7 +500,7 @@ Removes one or more parameters from the query string
 				$parameter
 			</td>
 			<td>
-									<a href="http://www.php.net/language.types.string.php">string</a>
+									<a href="http://php.net/language.types.string">string</a>
 				
 			</td>
 			<td>
@@ -513,7 +513,7 @@ Removes one or more parameters from the query string
 				...
 			</td>
 			<td>
-									<a href="http://www.php.net/language.types.string.php">string</a>
+									<a href="http://php.net/language.types.string">string</a>
 				
 			</td>
 			<td>
@@ -559,7 +559,7 @@ Replaces a value in the query string
 				$parameter
 			</td>
 			<td>
-									<a href="http://www.php.net/language.types.string.php">string</a>
+									<a href="http://php.net/language.types.string">string</a>
 				
 			</td>
 			<td rowspan="3">
@@ -569,7 +569,7 @@ Replaces a value in the query string
 			
 		<tr>
 			<td>
-									<a href="http://www.php.net/language.types.array.php">array</a>
+									<a href="http://php.net/language.types.array">array</a>
 				
 			</td>
 		</tr>
@@ -579,7 +579,7 @@ Replaces a value in the query string
 				$value
 			</td>
 			<td>
-									<a href="http://www.php.net/language.types.string.php">string</a>
+									<a href="http://php.net/language.types.string">string</a>
 				
 			</td>
 			<td rowspan="3">
@@ -589,7 +589,7 @@ Replaces a value in the query string
 			
 		<tr>
 			<td>
-									<a href="http://www.php.net/language.types.array.php">array</a>
+									<a href="http://php.net/language.types.array">array</a>
 				
 			</td>
 		</tr>
@@ -615,7 +615,12 @@ Replaces a value in the query string
 
 #### <span style="color:#3e6a6e;">normalizePath()</span>
 
-Normalizes the URL path resolving parent/current directory segments and repeat slashes
+Normalizes the URL
+
+##### Details
+
+This will consolidate multiple slashes in a row, reduce back path segments (`..`) and
+remove current path segments (`.`).
 
 ###### Returns
 
@@ -637,6 +642,10 @@ Normalizes the URL path resolving parent/current directory segments and repeat s
 
 Normalizes the URL port depending on scheme
 
+##### Details
+
+This will remove the port if the port matches the default for the scheme.
+
 ###### Returns
 
 <dl>
@@ -656,6 +665,10 @@ Normalizes the URL port depending on scheme
 #### <span style="color:#3e6a6e;">normalizeQuery()</span>
 
 Normalizes the Query
+
+##### Details
+
+Parse a query set as a string or set empty arrays if invalid value is provided.
 
 ###### Returns
 

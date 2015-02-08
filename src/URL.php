@@ -295,17 +295,17 @@
 		 * If the location...
 		 *
 		 *  - starts with `/`, it is treated as an absolute path
+		 *  - starts with `//` it is treated as a new url on the same scheme
 		 *  - starts with a scheme (e.g. `http://`), it is treated as a fully-qualified URL
 		 *  - starts with ./ it is treated as a relative path
 		 *  - starts with # it is treated as a fragment additon or replacement
-		 *  - is ommitted, it is treated as the current URL
 		 *
 		 * If the location is an array, it will replace parts of the URL identified by the keys
 		 * with the value of those keys.
 		 *
-		 * @example modify/with_array.php
-		 * @example modify/with_string_1.php
-		 * @example modify/with_string_2.php
+		 * @example url/modify/with_array.php
+		 * @example url/modify/with_string_1.php
+		 * @example url/modify/with_string_2.php
 		 *
 		 * @access public
 		 * @param string|array $location The location to modify with
@@ -330,7 +330,7 @@
 				$location = ltrim((string) $location);
 
 				if (strpos($location, '//') === 0) {
-						$location = $this->data['scheme'] . ':' . $location;
+					$location = $this->data['scheme'] . ':' . $location;
 				}
 
 				$url_parts = parse_url($location);
@@ -417,7 +417,10 @@
 
 
 		/**
-		 * Normalizes the URL path resolving parent/current directory segments and repeat slashes
+		 * Normalizes the URL
+		 *
+		 * This will consolidate multiple slashes in a row, reduce back path segments (`..`) and
+		 * remove current path segments (`.`).
 		 *
 		 * @access private
 		 * @return void
@@ -438,6 +441,8 @@
 		/**
 		 * Normalizes the URL port depending on scheme
 		 *
+		 * This will remove the port if the port matches the default for the scheme.
+		 *
 		 * @access private
 		 * @return void
 		 */
@@ -455,6 +460,8 @@
 
 		/**
 		 * Normalizes the Query
+		 *
+		 * Parse a query set as a string or set empty arrays if invalid value is provided.
 		 *
 		 * @access private
 		 * @return void
