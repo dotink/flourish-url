@@ -313,64 +313,40 @@
 		 */
 		public function modify($location)
 		{
+			if ($location instanceof self) {
+				return clone $location;
+			}
+
 			$new = clone $this;
 
-			if ($location) {
-				if ($location instanceof self) {
-					$new = clone $location;
+			if (is_array($location)) {
+				if (isset($location['scheme']) && !isset($location['port'])) {
+					$location['port'] = NULL;
+				}
 
-				} elseif (is_array($location)) {
-					if (isset($location['scheme']) && !isset($location['port'])) {
-						$location['port'] = NULL;
-					}
+				$new->data = array_merge($new->data, $location);
 
-					$new->data = array_merge($new->data, $location);
+			} else {
+				$location = ltrim((string) $location);
 
-				} else {
-					$location = ltrim((string) $location);
+				if (strpos($location, '//') === 0) {
+						$location = $this->data['scheme'] . ':' . $location;
+				}
 
-					if (preg_match('#^[A-Za-z]+://#i', $location)) {
-						$new = new self($location);
+				$url_parts = parse_url($location);
+				$new->data = array_merge(
+					$new->data,
+					$url_parts
+				);
+
+				if ($new->data['path'][0] != '/') {
+					if (substr($this->data['path'], -1) == '/') {
+						$new->data['path'] = $this->data['path'] . $new->data['path'];
 
 					} else {
-						if (strpos($location, '/') === 0) {
-							$location = new self($location);
-							$values   = array(
-								'path'     => $location->data['path'],
-								'query'    => $location->data['query'],
-								'fragment' => $location->data['fragment']
-							);
-
-							$new->data = array_merge($new->data, $values);
-
-						} elseif (strpos($location, '?') === 0) {
-							$location  = new self($location);
-							$values    = array(
-								'query'    => $location->data['query'],
-								'fragment' => $location->data['fragment']
-							);
-
-							$new->data = array_merge($new->data, $values);
-
-						} elseif (strpos($location, '#') === 0) {
-							$new->data['fragment'] = substr($location, 1);
-
-						} else {
-							$location = new self($location);
-
-							if (substr($new->data['path'], -1) != '/') {
-								$path_parts        = explode('/', $new->data['path']);
-								$new->data['path'] = implode('/', array_slice($path_parts, 0, -1));
-							}
-
-							$values = array(
-								'path'     => $new->data['path'] . '/' . $location->data['path'],
-								'query'    => $location->data['query'],
-								'fragment' => $location->data['fragment']
-							);
-
-							$new->data = array_merge($new->data, $values);
-						}
+						$path_parts        = explode('/', $this->data['path']);
+						$base_path         = implode('/', array_slice($path_parts, 0, -1));
+						$new->data['path'] = $base_path . '/' . $new->data['path'];
 					}
 				}
 			}
@@ -456,7 +432,6 @@
 			}
 
 			$this->data['path'] = str_replace('/../', '/', $this->data['path']);
-			$this->data['path'] = '/' . ltrim($this->data['path'],  '/');
 		}
 
 
