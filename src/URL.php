@@ -7,16 +7,14 @@
 	 * entered by the user will be used, or that any rewrites will **not** be reflected by this
 	 * class.
 	 *
-	 * @copyright  Copyright (c) 2007-2011 Will Bond, others
-	 * @author     Will Bond           [wb]  <will@flourishlib.com>
-	 * @author     Matthew J. Sahagian [mjs] <msahagian@dotink.org>
 	 *
-	 * @license    Please reference the LICENSE.md file at the root of this distribution
+	 * @copyright Copyright (c) 2007-2015 Will Bond, Matthew J. Sahagian, others
+	 * @author Will Bond [wb] <will@flourishlib.com>
+	 * @author Matthew J. Sahagian [mjs] <msahagian@dotink.org>
 	 *
-	 * @package    Flourish
+	 * @license Please reference the LICENSE.md file at the root of this distribution
 	 *
-	 * Static Dependencies:
-	 * - UTF8
+	 * @package Flourish
 	 */
 	class URL
 	{
