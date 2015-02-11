@@ -1,7 +1,7 @@
 # URL
 ## Provides functionality to manipulate URL information
 
-_Copyright (c) 2007-2011 Will Bond, others_.
+_Copyright (c) 2007-2015 Will Bond, Matthew J. Sahagian, others_.
 _Please reference the LICENSE.md file at the root of this distribution_
 
 ### Details
