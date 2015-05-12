@@ -102,6 +102,8 @@
 					? preg_replace('#^[^?]*\??#', '', $_SERVER['REQUEST_URI'])
 					: '',
 
+				'user'     => NULL,
+				'pass'     => NULL,
 				'fragment' => NULL
 			);
 
@@ -168,6 +170,15 @@
 
 
 		/**
+		 *
+		 */
+		public function getAuthority()
+		{
+			return $this->getHost(TRUE) . ($this->getPort() ? ':' . $this->getPort() : NULL);
+		}
+
+
+		/**
 		 * Get the domain name, with protcol prefix and non-default port.
 		 *
 		 * Port will be included if not 80 for HTTP or 443 for HTTPS.
@@ -175,13 +186,9 @@
 		 * @access public
 		 * @return string The current domain name, prefixed by `http://` or `https://`
 		 */
-		public function getDomain()
+		public function getDomain($include_scheme = TRUE)
 		{
-			$port = $this->data['port']
-				? ':' . $this->data['port']
-				: NULL;
-
-			return $this->data['scheme'] . '://' . $this->data['host'] . $port;
+			return ($include_scheme ? $this->getScheme(TRUE) : '//') . $this->getAuthority();
 		}
 
 
@@ -206,9 +213,18 @@
 		 * @access public
 		 * @return string  The host in the URL
 		 */
-		public function getHost()
+		public function getHost($include_auth = FALSE)
 		{
-			return $this->data['host'];
+			return ($include_auth ? $this->getUserInfo(TRUE) : NULL) . $this->data['host'];
+		}
+
+
+		/**
+		 *
+		 */
+		public function getPass()
+		{
+			return $this->data['pass'];
 		}
 
 
@@ -216,11 +232,11 @@
 		 * Gets the path in the URL
 		 *
 		 * @access public
-		 * @return string  The path in the URL
+		 * @return string The path in the URL
 		 */
-		public function getPath()
+		public function getPath($include_query = FALSE)
 		{
-			return $this->data['path'];
+			return $this->data['path'] . ($include_query ? $this->getQuery(TRUE) : NULL);
 		}
 
 
@@ -228,11 +244,23 @@
 		 * Returns the url path with the query string
 		 *
 		 * @access public
-		 * @return string  The URL with query string
+		 * @return string The URL with query string
 		 */
 		public function getPathWithQuery()
 		{
-			return $this->data['path'] . $this->getQuery(TRUE);
+			return $this->getPath(TRUE);
+		}
+
+
+		/**
+		 * Get the port of the url
+		 *
+		 * @access public
+		 * @return string The port of the URL
+		 */
+		public function getPort()
+		{
+			return $this->data['port'];
 		}
 
 
@@ -245,6 +273,10 @@
 		 */
 		public function getQuery($include_question_mark = FALSE)
 		{
+			if (!count($this->data['query'])) {
+				return NULL;
+			}
+
 			if (!defined('PHP_QUERY_RFC3986')) {
 
 				//
@@ -252,23 +284,18 @@
 				//
 
 				$encoded_params = array();
-				$query          = NULL;
 
-				if (count($this->data['query'])) {
-					foreach ($this->data['query'] as $param => $value) {
-						$encoded_params[] = rawurlencode($param) . '=' . rawurlencode($value);
-					}
-
-					$query = implode('&', $encoded_params);
+				foreach ($this->data['query'] as $param => $value) {
+					$encoded_params[] = rawurlencode($param) . '=' . rawurlencode($value);
 				}
+
+				$query = implode('&', $encoded_params);
 
 			} else {
 				$query = http_build_query($this->data['query'], NULL, '&', PHP_QUERY_RFC3986);
 			}
 
-			return $query
-				? ($include_question_mark ? '?' : NULL) . $query
-				: NULL;
+			return ($include_question_mark ? '?' : NULL) . $query;
 		}
 
 
@@ -276,11 +303,50 @@
 		 * Gets the scheme in the URL
 		 *
 		 * @access public
-		 * @return string  The scheme in the URL
+		 * @return string The scheme in the URL
 		 */
-		public function getScheme()
+		public function getScheme($include_root = FALSE)
 		{
-			return $this->data['scheme'];
+			if (!isset($this->data['scheme'])) {
+				return $include_root ? '//' : NULL;
+			}
+
+			$scheme  = $this->data['scheme'];
+			$scheme .= $include_root ? '://' : NULL;
+
+			return $scheme;
+		}
+
+
+		/*
+		 * Get the user info from the URL
+		 *
+		 * @access public
+		 * @return string The user info from the URL
+		 */
+		public function getUserInfo($include_at = FALSE)
+		{
+			if (!$this->getUser()) {
+				return NULL;
+			}
+
+			$user_info  = $this->getUser();
+			$user_info .= $this->getPass() ? (':' . $this->getPass()) : NULL;
+			$user_info .= $include_at ? '@' : NULL;
+
+			return  $user_info;
+		}
+
+
+		/**
+		 * Get the user from the URL
+		 *
+		 * @access public
+		 * @return string The user from the URL
+		 */
+		public function getUser()
+		{
+			return $this->data['user'];
 		}
 
 
