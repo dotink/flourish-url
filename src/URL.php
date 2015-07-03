@@ -22,10 +22,10 @@
 		 * Default ports for various schemes
 		 *
 		 * @static
-		 * @access private
+		 * @access protected
 		 * @var array
 		 */
-		static private $defaultPorts = array(
+		static protected $defaultPorts = array(
 			'ftp'   => 21,
 			'sftp'  => 22,
 			'ssh'   => 22,
@@ -40,10 +40,10 @@
 		/**
 		 * The URL data
 		 *
-		 * @access private
+		 * @access protected
 		 * @var array
 		 */
-		private $data = array();
+		protected $data = array();
 
 
 		/**
@@ -202,8 +202,8 @@
 		public function getFragment($include_hash = FALSE)
 		{
 			return $this->data['fragment']
-				? ($include_hash ? '#' : NULL) . $this->data['fragment']
-				: NULL;
+				? ($include_hash ? '#' : '') . $this->data['fragment']
+				: '';
 		}
 
 
@@ -308,11 +308,11 @@
 		public function getScheme($include_root = FALSE)
 		{
 			if (!isset($this->data['scheme'])) {
-				return $include_root ? '//' : NULL;
+				return $include_root ? '//' : '';
 			}
 
 			$scheme  = $this->data['scheme'];
-			$scheme .= $include_root ? '://' : NULL;
+			$scheme .= $include_root ? '://' : '';
 
 			return $scheme;
 		}
@@ -418,6 +418,8 @@
 			$new->normalizePath();
 			$new->normalizePort();
 			$new->normalizeQuery();
+			$new->normalizeScheme();
+			$new->normalizeFragment();
 
 			return $new;
 		}
@@ -481,15 +483,26 @@
 
 
 		/**
+		 *
+		 */
+		protected function normalizeFragment()
+		{
+			if ($this->data['fragment']) {
+				$this->data['fragment'] = rawurldecode($this->data['fragment']);
+			}
+		}
+
+
+		/**
 		 * Normalizes the URL
 		 *
 		 * This will consolidate multiple slashes in a row, reduce back path segments (`..`) and
 		 * remove current path segments (`.`).
 		 *
-		 * @access private
+		 * @access protected
 		 * @return void
 		 */
-		private function normalizePath()
+		protected function normalizePath()
 		{
 			$this->data['path'] = preg_replace('#/+#',   '/', $this->data['path']);
 			$this->data['path'] = preg_replace('#/\./#', '/', $this->data['path']);
@@ -507,10 +520,10 @@
 		 *
 		 * This will remove the port if the port matches the default for the scheme.
 		 *
-		 * @access private
+		 * @access protected
 		 * @return void
 		 */
-		private function normalizePort()
+		protected function normalizePort()
 		{
 			$scheme = strtolower($this->data['scheme']);
 
@@ -523,14 +536,23 @@
 
 
 		/**
+		 *
+		 */
+		protected function normalizeScheme()
+		{
+			$this->data['scheme'] = strtolower($this->data['scheme']);
+		}
+
+
+		/**
 		 * Normalizes the Query
 		 *
 		 * Parse a query set as a string or set empty arrays if invalid value is provided.
 		 *
-		 * @access private
+		 * @access protected
 		 * @return void
 		 */
-		private function normalizeQuery()
+		protected function normalizeQuery()
 		{
 			if (!is_array($this->data['query'])) {
 				if (is_string($this->data['query'])) {
