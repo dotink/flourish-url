@@ -397,6 +397,10 @@
 					$location = $this->data['scheme'] . ':' . $location;
 				}
 
+				if (strpos($location, '#') !== 0) {
+					$new->data['query'] = array();
+				}
+
 				$url_parts = parse_url($location);
 				$new->data = array_merge(
 					$new->data,
